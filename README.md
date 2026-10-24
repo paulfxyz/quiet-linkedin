@@ -70,14 +70,14 @@ This extension only adjusts the visibility of badges in the top navigation bar. 
 
 No build step or command-line setup is required to run the extension. You install the packaged files directly into your browser using unpacked extension mode.
 
-1. Download the release archive [quiet-linkedin-v1.1.0.zip](https://github.com/paulfxyz/quiet-linkedin/releases/download/v1.1.0/quiet-linkedin-v1.1.0.zip) from GitHub Releases.
+1. Download the [v1.1.0 source ZIP](https://github.com/paulfxyz/quiet-linkedin/archive/refs/tags/v1.1.0.zip).
 2. Extract the archive into a permanent folder on your computer so the browser can read it continuously.
 3. Open `chrome://extensions` in Chrome, or navigate to the extension manager in Comet.
 4. Turn on the **Developer mode** toggle in the top-right corner.
 5. Click **Load unpacked** and select the directory containing `manifest.json`.
 6. Reload your active LinkedIn tabs to apply the stylesheet.
 
-Alternatively, developers can clone the repository directly using `git clone https://github.com/paulfxyz/quiet-linkedin.git` and select the repository root when clicking **Load unpacked**.
+The source ZIP includes documentation and development files, but no build or dependency installation is needed to use it. Alternatively, developers can clone the repository using `git clone https://github.com/paulfxyz/quiet-linkedin.git` and select the repository root when clicking **Load unpacked**.
 
 This project is distributed directly via GitHub and is not listed in the Chrome Web Store. Releases require no data or settings migration. To update, extract and replace files while retaining your chosen active directory, click the refresh icon on the extension card in your extension manager, and reload your LinkedIn tabs. The release ZIP is not automatically installed by the browser. To disable or uninstall, toggle off or click **Remove** in your extension manager, then reload LinkedIn; badges reappear immediately.
 
@@ -116,7 +116,7 @@ quiet-linkedin/                # Repository root (documentation & source)
 └── package.json               # Developer configuration
 ```
 
-Runtime files loaded by the browser are `manifest.json`, `src/quiet.css`, and the `icons/` folder. The downloadable release ZIP contains these runtime files along with `INSTALL.md`, `LICENSE`, and `PRIVACY.md`, omitting repository-only assets like full screenshots and test suites.
+Runtime files loaded by the browser are `manifest.json`, `src/quiet.css`, and the `icons/` folder. The public source archive includes the rest of the repository. The optional `npm run package` command creates a smaller ZIP containing only runtime files, `INSTALL.md`, `LICENSE`, and `PRIVACY.md`, omitting screenshots and test suites.
 
 ## Privacy and site access
 
