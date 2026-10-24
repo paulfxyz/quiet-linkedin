@@ -1,0 +1,35 @@
+name: A badge is still visible
+description: Report a missed Home or Notifications badge without sharing private account information.
+title: "Badge visible: "
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Extension version
+      placeholder: "1.1.0"
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser version and operating system
+      placeholder: "Comet / Chrome version, macOS / Windows / Linux"
+    validations:
+      required: true
+  - type: dropdown
+    id: target
+    attributes:
+      label: Which badge is visible?
+      options:
+        - Home
+        - Notifications
+        - Both
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: What happened?
+      description: Include page type, LinkedIn interface language, and whether reloading helped. Crop screenshots to the navigation bar. Remove names, photos, messages, identifiers, and cookies.
+    validations:
+      required: true

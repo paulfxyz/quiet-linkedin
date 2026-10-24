@@ -1,16 +1,66 @@
-/* Quiet, LinkedIn! - hide the badges on the top nav (Home, Notifications).
-   LinkedIn's class names are hashed and change often, so we rely on stable hooks:
-   icon ids, the notifications href, and the legacy badge class. */
+/*
+ * Quiet, LinkedIn! | MIT | https://github.com/paulfxyz/quiet-linkedin
+ *
+ * Only two targets: Home and Notifications in desktop navigation.
+ * No hashed LinkedIn classes, translated labels, colors, or unread counts.
+ * Keep each rule constrained to the icon wrapper or an explicit badge class.
+ */
 
-/* Home badge: the dot/counter sits right after the home icon */
-svg#home-medium + span,
-svg#home-small + span,
-/* Notifications badge: the counter sits right after the bell icon */
-svg#bell-fill-medium + span,
-svg#bell-medium + span,
-a[href*="/notifications"] svg + span,
-/* Legacy / alternate nav markup */
-.global-nav__primary-link .notification-badge,
-.notification-badge {
+/* Current layout: a badge is a sibling of the SVG inside its icon wrapper.
+ * The two wrapper levels are intentional: never hide the text label next to
+ * a standalone icon, the icon itself, or an entire navigation control.
+ * CSS automatically covers elements inserted during client-side navigation.
+ */
+:is(ul, nav, header, .global-nav) :is(a, button)
+  > :is(span, div)
+  > svg:is(
+    #home-medium,
+    #home-small,
+    #home-fill-medium,
+    #home-fill-small,
+    #bell-medium,
+    #bell-small,
+    #bell-fill-medium,
+    #bell-fill-small
+  )
+  ~ :is(span, div):not(:has(svg, li-icon)),
+
+/* Legacy layout: only badges inside exact Home / Notifications nav links.
+ * Do not use a global .notification-badge rule: Messaging and My Network
+ * may use that class too. Feed posts and notification detail links are not
+ * navigation roots and deliberately do not match these URL patterns.
+ */
+:is(ul, nav, header, .global-nav)
+  a:is(
+    [href="/feed"],
+    [href="/feed/"],
+    [href^="/feed/?"],
+    [href="https://www.linkedin.com/feed"],
+    [href="https://www.linkedin.com/feed/"],
+    [href^="https://www.linkedin.com/feed/?"],
+    [href="/notifications"],
+    [href="/notifications/"],
+    [href^="/notifications/?"],
+    [href="https://www.linkedin.com/notifications"],
+    [href="https://www.linkedin.com/notifications/"],
+    [href^="https://www.linkedin.com/notifications/?"]
+  )
+  :is(.notification-badge, .notification-badge__count),
+
+/* Alternate wrappers with an explicitly marked badge, anchored by icon ID. */
+:is(ul, nav, header, .global-nav)
+  :is(a, button):has(
+    svg:is(
+      #home-medium,
+      #home-small,
+      #home-fill-medium,
+      #home-fill-small,
+      #bell-medium,
+      #bell-small,
+      #bell-fill-medium,
+      #bell-fill-small
+    )
+  )
+  :is(.notification-badge, .notification-badge__count) {
   display: none !important;
 }

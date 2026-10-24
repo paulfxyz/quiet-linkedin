@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="title">
+  <title id="title">Quiet, LinkedIn! muted bell icon</title>
+  <rect width="1024" height="1024" rx="200" fill="#0a66c2"/>
+  <g fill="#fff">
+    <path d="M290 442a222 222 0 0 1 444 0v158l86 120H204l86-120Z"/>
+    <ellipse cx="512" cy="775" rx="80" ry="45"/>
+    <circle cx="512" cy="210" r="40"/>
+  </g>
+  <path d="M220 220 804 804" stroke="#0a66c2" stroke-width="130"/>
+  <path d="M220 220 804 804" stroke="#fff" stroke-width="64"/>
+</svg>

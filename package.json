@@ -1,0 +1,19 @@
+{
+  "name": "quiet-linkedin",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Development checks for Quiet, LinkedIn! The extension has no npm runtime dependencies.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/extension.test.mjs",
+    "package": "node scripts/package.mjs",
+    "assets": "python3 scripts/assets.py"
+  },
+  "devDependencies": {
+    "playwright": "1.64.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
