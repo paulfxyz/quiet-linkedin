@@ -195,4 +195,4 @@ Contributions that improve selector precision or expand test coverage are welcom
 
 Quiet, LinkedIn! is written by [Paul Fleury](https://github.com/paulfxyz) and licensed under the [MIT License](LICENSE). You can explore related small-tool repositories on [Paul Fleury's GitHub](https://github.com/paulfxyz).
 
-This project is independent open-source software and is not affiliated with, sponsored by, or endorsed by LinkedIn Corporation or Perplexity AI.
+This project is independent open-source software and is not affiliated with, sponsored by, or endorsed by LinkedIn Corporation, Google, the Chromium project, or Perplexity AI.
