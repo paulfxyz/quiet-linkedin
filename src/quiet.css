@@ -1,0 +1,16 @@
+/* Quiet, LinkedIn! - hide the badges on the top nav (Home, Notifications).
+   LinkedIn's class names are hashed and change often, so we rely on stable hooks:
+   icon ids, the notifications href, and the legacy badge class. */
+
+/* Home badge: the dot/counter sits right after the home icon */
+svg#home-medium + span,
+svg#home-small + span,
+/* Notifications badge: the counter sits right after the bell icon */
+svg#bell-fill-medium + span,
+svg#bell-medium + span,
+a[href*="/notifications"] svg + span,
+/* Legacy / alternate nav markup */
+.global-nav__primary-link .notification-badge,
+.notification-badge {
+  display: none !important;
+}
