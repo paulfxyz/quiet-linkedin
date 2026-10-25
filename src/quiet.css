@@ -6,7 +6,8 @@
  * Keep each rule constrained to the icon wrapper or an explicit badge class.
  */
 
-/* Current layout: a badge is a sibling of the SVG inside its icon wrapper.
+/* Live-verified in Comet on 2026-10-25 with both badges active.
+ * Current layout: a badge immediately follows the SVG in its icon wrapper.
  * The two wrapper levels are intentional: never hide the text label next to
  * a standalone icon, the icon itself, or an entire navigation control.
  * CSS automatically covers elements inserted during client-side navigation.
@@ -23,7 +24,7 @@
     #bell-fill-medium,
     #bell-fill-small
   )
-  ~ :is(span, div):not(:has(svg, li-icon)),
+  + :is(span, div):not(:has(svg, li-icon)),
 
 /* Legacy layout: only badges inside exact Home / Notifications nav links.
  * Do not use a global .notification-badge rule: Messaging and My Network

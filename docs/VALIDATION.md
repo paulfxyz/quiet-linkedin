@@ -4,7 +4,7 @@ This document details the automated tests and manual inspection procedures used 
 
 ## Automated regression suite
 
-The automated test suite runs via Node.js native test runner and Playwright (`tests/extension.test.mjs`). On October 24, 2026, all 9 top-level tests passed successfully in an automated test run.
+The automated test suite runs via Node.js native test runner and Playwright (`tests/extension.test.mjs`). On October 25, 2026, all 10 top-level tests passed, including the navigation markup captured from the live Comet page.
 
 Measured test environment:
 - Engine: Playwright's Chrome for Testing 156.0.8078.4
@@ -26,14 +26,19 @@ An earlier local pass also succeeded with Chromium 156.0.8078.48. These engine v
 7. **Dynamic updates:** Tests dynamic HTML insertion and counter mutations (`99+`) to confirm CSS rerenders without DOM observers.
 8. **Theme consistency:** Validates badge suppression under both light and dark system color schemes.
 9. **Origin isolation:** Launches an unpacked browser context with route interception to verify that CSS applies only to `https://www.linkedin.com/*` and does not inject into alternative origins.
+10. **Captured production layout:** Tests the sanitized Home button and Notifications anchor captured with both badges active on October 25. Verifies that icons, text labels, unread accessibility labels, and later unrelated siblings remain intact; the installed-extension test also uses this markup.
 
-Note: The installed unpacked test uses synthetic HTML mockups intercepted at LinkedIn URLs in Chromium, not production LinkedIn page data. Refer to the dynamic GitHub Actions badge for current remote CI status.
+The installed unpacked test uses intercepted pages in Chromium, including both synthetic fixtures and a sanitized capture of the live navigation structure. It does not open a logged-in LinkedIn account or install the extension in Comet; refer to the separate live record below and the workflow badge for current remote CI status.
 
 ## Manual verification record
 
-- **Date:** October 24, 2026
+- **Date:** October 25, 2026
 - **Target:** Desktop LinkedIn profile page (Comet layout)
-- **Method:** Live Comet CSS injection (v1.0)
-- **Observed state:** The Home navigation item showed an active red dot; the Notifications bell icon had zero active unread items.
-- **Result:** Injected stylesheet rules successfully removed the active Home notification dot without affecting surrounding navigation controls.
-- **Limitation:** Verification of simultaneous live badges across both Home and Notifications items remains pending an account state with both badges active at once. Chrome live testing was not conducted in this run.
+- **Method:** Live Comet stylesheet injection using the exact v1.1.1 CSS from the repository.
+- **Observed state:** Home showed an active dot and Notifications showed the count `1`; each control's accessibility label reported `1 new notification`.
+- **Result:** Both badges changed from computed `display: flex` to `display: none`. Both SVG icons remained `display: block`, both text-label wrappers remained `display: flex`, and the unread labels still reported `1 new notification`.
+- **Visual evidence:** `screenshots/reference/before.png`, `screenshots/reference/after.png`, and `screenshots/screenshot.png` contain only the relevant navigation strip, without profile or message content.
+- **Regression fixture:** `tests/fixtures/linkedin-nav.html` preserves the two controls and their icon-wrapper structure, with volatile classes removed.
+- **Limitation:** This verifies the stylesheet on the live page, not installation in Comet. Installation is tested separately in Chromium, including against the captured markup.
+
+The earlier October 24 check covered the Home dot only because Notifications had no active badge. That limitation is superseded by the simultaneous live stylesheet check above; it was never evidence of an installed Comet extension.

@@ -1,23 +1,20 @@
-# Quiet, LinkedIn! 1.1.0 Release Notes
+# Quiet, LinkedIn! 1.1.1 Release Notes
 
-Quiet, LinkedIn! 1.1.0 refines badge hiding rules for desktop navigation, introduces a full automated regression suite, and tightens selector scoping.
+This patch verifies both active badges on the live desktop LinkedIn page in Comet and narrows the modern selector to the badge immediately after its icon. The extension remains CSS-only, with no tracking, runtime JavaScript, or changes to unread state.
 
-## What's new in version 1.1.0
+## Changes
 
-- **Strict selector scoping:** Replaced general class selectors with tightly anchored navigation rules. Hiding rules now target exact icon wrappers and root navigation anchors, avoiding conflicts with Messaging, My Network, or in-feed elements.
-- **Support for icon variants:** Added rules matching small and filled SVG icon variants used across desktop navigation bar updates.
-- **Automated test suite:** Added Playwright regression tests covering dynamic updates, color schemes, link preservation, and unpacked extension isolation.
-- **Minimal-package tooling:** Added an allowlisted packaging workflow for runtime files (manifest, quiet.css, icons) alongside LICENSE, PRIVACY.md, and INSTALL.md. The public source archive also includes the rest of the repository.
-- **No data migration:** This release requires no settings or data migrations. When updating, extract the archive over your existing active folder, click refresh in your extension manager, and reload LinkedIn tabs.
+- **Live verification:** Home and Notifications each reported one new notification. Applying the v1.1.1 stylesheet hid both badges while preserving the icons, labels, and unread accessibility labels.
+- **Selector safety:** Later siblings in an icon wrapper are no longer hidden by the modern rule.
+- **Regression coverage:** Added sanitized markup from the live page and a tenth regression test. The installed Chromium test also checks the captured layout.
+- **Documentation:** Replaced the Home-only comparison with a real before/after showing both badges and updated the validation record.
 
-## Scope and behavior
+The live Comet check used stylesheet injection, not an installed extension. The unpacked package is tested separately in Chromium against intercepted pages, including the captured navigation structure.
 
-Quiet, LinkedIn! is completely declarative and contains no background JavaScript. It hides Home and Notifications navigation badges without modifying account read states, tab titles, or mobile application settings.
+## Installation and update
 
-Note on verification: The test suite passed completely against synthetic fixtures in Chromium on October 24, 2026. Live verification on LinkedIn confirmed Home badge suppression via injected CSS; manual confirmation of an installed unpacked extension with active badges on both Home and Notifications simultaneously is pending.
+[Download the v1.1.1 source ZIP](https://github.com/paulfxyz/quiet-linkedin/archive/refs/tags/v1.1.1.zip), extract it into a permanent folder, and select the directory containing `manifest.json` using **Load unpacked** in your browser's extensions manager. No build, account, or API key is required.
 
-## Installation
+To update an existing unpacked installation, replace its files with v1.1.1, click **Reload** on the extension card, then reload LinkedIn. If you load the new folder as a separate extension, disable or remove the old copy so only one version is active.
 
-[Download the v1.1.0 source ZIP](https://github.com/paulfxyz/quiet-linkedin/archive/refs/tags/v1.1.0.zip), extract it, and load the folder containing `manifest.json` via **Load unpacked** in Developer mode. No build, dependency installation, account, or API key is required.
-
-GitHub's asset-upload endpoint rejected the minimal ZIP during publication, so the source archive is the public download for this release. Developers can create the minimal ZIP with `npm ci` and `npm run package`; that ZIP was separately tested as an installed extension against synthetic fixtures.
+Developers can create the minimal package using `npm ci` and `npm run package`. This project is MIT-licensed, and no settings or data migration is required.

@@ -1,4 +1,4 @@
-"""Rebuild the Home-only real screenshot card. Requires Pillow, not the extension."""
+"""Rebuild the live two-badge screenshot card. Requires Pillow, not the extension."""
 
 from pathlib import Path
 from os import environ
@@ -23,15 +23,15 @@ def font(size, bold=False):
 
 
 def main():
-    canvas = Image.new("RGB", (1600, 780), "#f3f6fa")
+    canvas = Image.new("RGB", (1600, 940), "#f3f6fa")
     draw = ImageDraw.Draw(canvas)
     draw.text((90, 64), "The same navigation. Without the nudge.", fill="#142d44",
               font=font(45, True))
-    draw.text((92, 138), "Actual LinkedIn capture | Home badge only | October 24, 2026",
+    draw.text((92, 138), "Actual LinkedIn capture | Both badges active | October 25, 2026",
               fill="#556b7b", font=font(23))
     for name, label, y, color in [
-        ("before.png", "BEFORE", 232, "#934345"),
-        ("after.png", "AFTER", 440, "#0a66c2"),
+        ("before.png", "BEFORE", 230, "#934345"),
+        ("after.png", "AFTER", 500, "#0a66c2"),
     ]:
         image = Image.open(REF / name).convert("RGB")
         image = image.resize((1416, round(image.height * 1416 / image.width)),
@@ -40,9 +40,9 @@ def main():
         box = (90, y + 46, 1510, y + 46 + image.height + 24)
         draw.rounded_rectangle(box, 14, fill="#ffffff", outline="#d5dfe8", width=2)
         canvas.paste(image, (92, y + 58))
-    draw.text((92, 674), "Notifications had no active badge in this capture.",
+    draw.text((92, 840), "Both Home and Notifications badges are hidden.",
               fill="#556b7b", font=font(23))
-    draw.text((92, 711), "Both-badge live verification is pending. These are not installed-extension screenshots.",
+    draw.text((92, 880), "Live stylesheet check in Comet; installed package tested separately in Chromium.",
               fill="#556b7b", font=font(19))
     canvas.save(ROOT / "screenshots" / "screenshot.png")
     print("Rebuilt screenshots/screenshot.png from cropped navigation references.")

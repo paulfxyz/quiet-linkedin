@@ -2,6 +2,21 @@
 
 All notable changes to Quiet, LinkedIn! are documented in this file.
 
+## [1.1.1] - 2026-10-25
+
+### Changed
+- Limited the modern icon-wrapper rule to the badge immediately after the SVG, leaving later siblings untouched.
+- Updated the README and comparison screenshot after verifying both active badges on the live Comet page.
+
+### Added
+- Sanitized navigation markup captured with the Home dot and Notifications counter both active.
+- A tenth regression test for that markup, preserved icons and labels, unchanged unread labels, and unrelated siblings.
+- Captured-markup coverage in the installed-extension test, including the packaged distribution.
+
+### Verification
+- The v1.1.1 stylesheet hid both badges in live Comet without changing either control's unread label.
+- All 10 local regression tests passed; installed-package checks use Chromium with intercepted pages, not an installed Comet extension.
+
 ## [1.1.0] - 2026-10-24
 
 ### Changed

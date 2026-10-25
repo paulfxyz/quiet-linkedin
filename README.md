@@ -60,9 +60,9 @@ This extension only adjusts the visibility of badges in the top navigation bar. 
 
 <div align="center">
 
-<img src="screenshots/screenshot.png" width="100%" alt="Cropped comparison of the LinkedIn navigation bar showing the Home badge before and after stylesheet injection">
+<img src="screenshots/screenshot.png" width="100%" alt="Actual LinkedIn navigation before and after: the Home dot and Notifications counter are both hidden">
 
-<p><sub>Cropped desktop comparison showing v1.0 CSS injection on a real Comet page, not an installed extension validation run, and not proof of v1.1 two-badge production results. In this capture, Home had an active unread indicator while Notifications had zero active badges.</sub></p>
+<p><sub>Live Comet check on October 25, 2026 using the v1.1.1 stylesheet. Home and Notifications each reported 1 new notification; both visual badges disappeared while icons, labels, and unread state remained unchanged. This image shows stylesheet injection on the real page; the unpacked package was tested separately in Chromium against the captured, sanitized markup.</sub></p>
 
 </div>
 
@@ -70,7 +70,7 @@ This extension only adjusts the visibility of badges in the top navigation bar. 
 
 No build step or command-line setup is required to run the extension. You install the packaged files directly into your browser using unpacked extension mode.
 
-1. Download the [v1.1.0 source ZIP](https://github.com/paulfxyz/quiet-linkedin/archive/refs/tags/v1.1.0.zip).
+1. Download the [v1.1.1 source ZIP](https://github.com/paulfxyz/quiet-linkedin/archive/refs/tags/v1.1.1.zip).
 2. Extract the archive into a permanent folder on your computer so the browser can read it continuously.
 3. Open `chrome://extensions` in Chrome, or navigate to the extension manager in Comet.
 4. Turn on the **Developer mode** toggle in the top-right corner.
@@ -132,10 +132,10 @@ Quiet, LinkedIn! targets desktop Chromium browsers including Google Chrome and C
 
 | Environment | Validation status | Notes |
 |---|---|---|
-| **Automated regression suite** | Passed (October 24, 2026) | 9 top-level tests passed using Chromium with intercepted fixtures. |
-| **Installed unpacked Chromium** | Automated pass | Matched and nonmatched tested fixture origins confirmed isolation. |
-| **Live Comet CSS injection (v1.0)** | Home verified; both pending | Visual check via injected CSS verified Home badge removal on October 24, 2026; Notifications had zero unread items; not an unpacked extension install. Chrome live not tested. |
-| **Remote GitHub CI** | See dynamic badge | Check the dynamic workflow badge above or view the Actions tab for live remote status. Initial local suite passed all 9 tests. |
+| **Automated regression suite** | Passed (October 25, 2026) | All 10 tests passed, including the sanitized live navigation layout and unrelated-sibling preservation. |
+| **Installed unpacked Chromium** | Automated pass | The actual package hides both captured badges; matched and nonmatched fixture origins confirm site scoping. |
+| **Live Comet stylesheet check (v1.1.1)** | Both badges verified | Both started active and became hidden on the live profile page; icons and labels stayed visible. This was stylesheet injection, not installation in Comet. |
+| **Remote GitHub CI** | See dynamic badge | Check the workflow badge above or the Actions tab for current remote status. |
 
 Detailed test methodology and verification summaries are documented in [docs/VALIDATION.md](docs/VALIDATION.md).
 

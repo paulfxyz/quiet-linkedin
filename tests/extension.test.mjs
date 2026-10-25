@@ -72,6 +72,29 @@ test("hides Home and Notifications together, preserving icons, text, and control
   });
 });
 
+test("matches the sanitized live Comet layout captured with both badges active", async () => {
+  const live = await readFile(resolve(root, "tests/fixtures/linkedin-nav.html"), "utf8");
+  await fixture(live, async (page) => {
+    for (const id of ["home-medium", "bell-fill-medium"]) {
+      const iconNode = page.locator(`svg#${id}`);
+      assert.equal(await iconNode.evaluate((e) => getComputedStyle(e.nextElementSibling).display), "none");
+      assert.equal(await iconNode.isVisible(), true);
+      const control = iconNode.locator("xpath=../..");
+      assert.equal(await control.isVisible(), true);
+      assert.equal(await control.locator(":scope > span:last-child").isVisible(), true);
+      assert.match(await control.getAttribute("aria-label"), /1 new notification/);
+    }
+    // Do not hide additional siblings in the icon wrapper.
+    await page.locator("#home-medium").evaluate((e) => {
+      const helper = document.createElement("span");
+      helper.id = "unrelated-helper";
+      helper.textContent = "Still visible";
+      e.parentElement.appendChild(helper);
+    });
+    assert.equal(await page.locator("#unrelated-helper").isVisible(), true);
+  });
+});
+
 test("supports dot, numerical, filled, small, span, and div variants without language matching", async () => {
   for (const id of ["home-medium", "home-small", "home-fill-medium", "home-fill-small", "bell-medium", "bell-small", "bell-fill-medium", "bell-fill-small"]) {
     await fixture(`<nav>${current("Accueil", id, '<div class="bubble"></div>', "div")}</nav>`, async (page) => {
@@ -161,6 +184,18 @@ test("real installed extension injects CSS only on the matched HTTPS LinkedIn or
       }, { hidden }, { timeout: 5000 });
       assert.equal(await page.locator(".bubble:visible").count(), hidden ? 0 : 2, url);
       assert.equal(await page.locator(".notification-badge:visible").count(), 1, url);
+    }
+    // Load the captured production structure with the actual unpacked package.
+    const live = await readFile(resolve(root, "tests/fixtures/linkedin-nav.html"), "utf8");
+    await context.unroute("**/*");
+    await context.route("**/*", (route) => route.fulfill({
+      status: 200, contentType: "text/html", body: live
+    }));
+    await page.goto("https://www.linkedin.com/in/live-markup-fixture/");
+    for (const id of ["home-medium", "bell-fill-medium"]) {
+      await page.waitForFunction((id) =>
+        getComputedStyle(document.getElementById(id).nextElementSibling).display === "none", id);
+      assert.equal(await page.locator(`#${id}`).isVisible(), true);
     }
   } finally {
     await context?.close();
