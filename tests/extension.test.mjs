@@ -113,6 +113,63 @@ test("legacy selectors hide only root Home and Notifications badges", async () =
   });
 });
 
+test("root links cover relative, absolute, slashless, query, fragment, and tracking variants", async () => {
+  const roots = ["feed", "notifications"].flatMap((name) =>
+    ["", "https://www.linkedin.com"].flatMap((origin) =>
+      ["", "/", "?trk=nav", "/?nis=true&", "#all", "/#all"].map((suffix) =>
+        `${origin}/${name}${suffix}`)));
+  await fixture(`<header>${roots.map((href) => legacy(href, href)).join("")}</header>`, async (page) => {
+    assert.equal(await page.locator(".notification-badge:visible").count(), 0);
+    assert.equal(await page.locator(".label:visible").count(), roots.length);
+  });
+});
+
+test("supports ID-free SVGs, active icons, sprite references, and legacy li-icon badges", async () => {
+  const hooks = [
+    '<svg id="home-active-medium" width="24" height="24"></svg>',
+    '<svg id="bell-fill-active-small" width="24" height="24"></svg>',
+    '<svg data-test-icon="home-fill-medium" width="24" height="24"></svg>',
+    '<svg data-test-icon="bell-fill-medium" width="24" height="24"></svg>',
+    '<svg width="24" height="24"><use href="#home-medium"></use></svg>',
+    '<svg width="24" height="24"><use href="#bell-fill-medium"></use></svg>',
+    '<svg width="24" height="24"><use xlink:href="#home-medium"></use></svg>'
+  ];
+  for (const hook of hooks) {
+    await fixture(`<nav><button><span>${hook}<span class="bubble">1</span></span><span class="label">Navigation</span></button></nav>`, async (page) => {
+      assert.equal(await page.locator(".bubble:visible").count(), 0, hook);
+      assert.equal(await page.locator("svg:visible").count(), 1, hook);
+      assert.equal(await page.locator(".label:visible").count(), 1, hook);
+    });
+  }
+  for (const type of ["home", "home-active", "bell", "bell-fill", "bell-fill-active"]) {
+    await fixture(`<nav><button><div><span class="notification-badge">1</span><li-icon type="${type}">${icon("generic")}</li-icon></div><span class="label">Navigation</span></button></nav>`, async (page) => {
+      assert.equal(await page.locator(".notification-badge:visible").count(), 0, type);
+      assert.equal(await page.locator("svg:visible").count(), 1, type);
+      assert.equal(await page.locator(".label:visible").count(), 1, type);
+    });
+  }
+});
+
+test("captured messaging navigation stays quiet and tolerates later LinkedIn badge styling", async () => {
+  const captured = await readFile(resolve(root, "tests/fixtures/linkedin-messaging-nav.html"), "utf8");
+  await fixture(captured, async (page) => {
+    const home = page.locator('a[href*="/feed"]');
+    const notifications = page.locator('a[href*="/notifications"]');
+    assert.equal(await home.locator(".notification-badge").evaluate((e) => getComputedStyle(e).display), "none");
+    // No Notifications badge was active during capture; test late insertion.
+    await notifications.evaluate((e) => {
+      const badge = document.createElement("span");
+      badge.className = "notification-badge notification-badge--show";
+      badge.textContent = "99+";
+      e.prepend(badge);
+    });
+    await page.addStyleTag({ content: ".global-nav .notification-badge.notification-badge--show { display: inline-flex !important; }" });
+    assert.equal(await page.locator(".notification-badge:visible").count(), 0);
+    assert.equal(await page.locator("li-icon svg:visible").count(), 2);
+    assert.equal(await page.locator(".global-nav__primary-link-text:visible").count(), 2);
+  });
+});
+
 test("leaves Messaging, My Network, Jobs, feed posts, content badges, and external links alone", async () => {
   const links = ["/messaging/", "/mynetwork/", "/jobs/", "/feed/update/example", "/notifications/detail/123", "https://example.com/notifications/"];
   await fixture(`<ul>${links.map((href) => `<li>${legacy(href, href)}</li>`).join("")}<li>${current("Messaging", "messages-medium")}</li></ul><main><span class="notification-badge">content</span>${current("Article", "home-medium")}</main>`, async (page) => {
@@ -173,6 +230,12 @@ test("real installed extension injects CSS only on the matched HTTPS LinkedIn or
       ["https://www.linkedin.com/in/test-fixture/", true],
       ["https://www.linkedin.com/feed/", true],
       ["https://www.linkedin.com/notifications/", true],
+      ["https://www.linkedin.com/messaging/", true],
+      ["https://www.linkedin.com/messaging/thread/test-fixture/", true],
+      ["https://www.linkedin.com/mynetwork/", true],
+      ["https://www.linkedin.com/jobs/", true],
+      ["https://www.linkedin.com/search/results/all/?keywords=test", true],
+      ["https://www.linkedin.com/company/test-fixture/", true],
       ["https://example.com/", false],
       ["http://www.linkedin.com/feed/", false],
       ["https://sub.linkedin.com/feed/", false]
@@ -196,6 +259,39 @@ test("real installed extension injects CSS only on the matched HTTPS LinkedIn or
       await page.waitForFunction((id) =>
         getComputedStyle(document.getElementById(id).nextElementSibling).display === "none", id);
       assert.equal(await page.locator(`#${id}`).isVisible(), true);
+    }
+    // Full loads, reloads, SPA route changes, and nav-layout swaps all keep
+    // the manifest stylesheet, without a runtime script or mutation observer.
+    const messaging = await readFile(resolve(root, "tests/fixtures/linkedin-messaging-nav.html"), "utf8");
+    await context.unroute("**/*");
+    await context.route("**/*", (route) => route.fulfill({
+      status: 200, contentType: "text/html", body: messaging
+    }));
+    const routes = [
+      "/feed/", "/in/test-fixture/", "/messaging/thread/test-fixture/",
+      "/notifications/", "/mynetwork/", "/jobs/", "/search/results/all/",
+      "/company/test-fixture/"
+    ];
+    for (const route of routes) {
+      await page.goto(`https://www.linkedin.com${route}`);
+      await page.waitForFunction(() =>
+        getComputedStyle(document.querySelector(".notification-badge")).display === "none");
+      await page.reload();
+      await page.waitForFunction(() =>
+        getComputedStyle(document.querySelector(".notification-badge")).display === "none");
+    }
+    for (let i = 0; i < routes.length; i++) {
+      await page.evaluate(({ route, markup }) => {
+        history.pushState({}, "", route);
+        document.body.innerHTML = new DOMParser().parseFromString(markup, "text/html").body.innerHTML;
+      }, { route: routes[i], markup: i % 2 ? live : messaging });
+      if (i % 2) {
+        assert.equal(await page.locator("#home-medium").evaluate((e) =>
+          getComputedStyle(e.nextElementSibling).display), "none");
+      } else {
+        assert.equal(await page.locator(".notification-badge").first().evaluate((e) =>
+          getComputedStyle(e).display), "none");
+      }
     }
   } finally {
     await context?.close();

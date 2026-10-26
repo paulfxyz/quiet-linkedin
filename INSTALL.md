@@ -1,6 +1,8 @@
-# Installing Quiet, LinkedIn! (v1.1.1)
+# Installing Quiet, LinkedIn! (v1.1.2)
 
 Quiet, LinkedIn! is a CSS-only extension that cosmetically hides Home and Notifications navigation badges on desktop LinkedIn. It makes no changes to notification read states, messaging counters, or personal data.
+
+Version 1.1.2 expands coverage across LinkedIn's navigation layouts, including messaging threads. After updating, reload the extension and all open LinkedIn tabs; merely copying the files does not update an already-open page.
 
 Project source: https://github.com/paulfxyz/quiet-linkedin
 

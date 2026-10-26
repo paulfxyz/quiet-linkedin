@@ -1,20 +1,22 @@
-# Quiet, LinkedIn! 1.1.1 Release Notes
+# Quiet, LinkedIn! 1.1.2 Release Notes
 
-This patch verifies both active badges on the live desktop LinkedIn page in Comet and narrows the modern selector to the badge immediately after its icon. The extension remains CSS-only, with no tracking, runtime JavaScript, or changes to unread state.
+This patch expands Home and Notifications badge coverage across LinkedIn's profile and Messaging navigation layouts. It remains CSS-only and applies to every path under `https://www.linkedin.com/*`, without hiding Messaging counters or changing unread state.
 
 ## Changes
 
-- **Live verification:** Home and Notifications each reported one new notification. Applying the v1.1.1 stylesheet hid both badges while preserving the icons, labels, and unread accessibility labels.
-- **Selector safety:** Later siblings in an icon wrapper are no longer hidden by the modern rule.
-- **Regression coverage:** Added sanitized markup from the live page and a tenth regression test. The installed Chromium test also checks the captured layout.
-- **Documentation:** Replaced the Home-only comparison with a real before/after showing both badges and updated the validation record.
+- **Icon coverage:** Added active icon variants, ID-free SVG attributes, sprite references, and legacy Home / bell `li-icon` hooks.
+- **Link coverage:** Added slashless, query, tracking, and fragment variants of Home and Notifications navigation roots.
+- **Style resilience:** Increased rule specificity to resist later LinkedIn badge styles.
+- **Regression coverage:** All 13 local tests passed, including an actual unpacked Chromium extension across direct loads, reloads, and in-page route/layout changes on eight LinkedIn page categories.
 
-The live Comet check used stylesheet injection, not an installed extension. The unpacked package is tested separately in Chromium against intercepted pages, including the captured navigation structure.
+The reported intermittent reappearance was not reproduced in a fresh messaging tab: Home was already hidden. Live checks with the v1.1.2 stylesheet confirmed Home stayed hidden in profile and Messaging layouts; Notifications had no active badge, so its new-layout insertion is verified in fixtures rather than claimed as a simultaneous live check.
 
 ## Installation and update
 
-[Download the v1.1.1 source ZIP](https://github.com/paulfxyz/quiet-linkedin/archive/refs/tags/v1.1.1.zip), extract it into a permanent folder, and select the directory containing `manifest.json` using **Load unpacked** in your browser's extensions manager. No build, account, or API key is required.
+[Download the v1.1.2 source ZIP](https://github.com/paulfxyz/quiet-linkedin/archive/refs/tags/v1.1.2.zip), extract it into a permanent folder, and load the directory containing `manifest.json` using **Load unpacked**. No build or dependency installation is required.
 
-To update an existing unpacked installation, replace its files with v1.1.1, click **Reload** on the extension card, then reload LinkedIn. If you load the new folder as a separate extension, disable or remove the old copy so only one version is active.
+For an existing installation, replace the files in its permanent folder, click **Reload** on the extension card in `chrome://extensions`, then reload all open LinkedIn tabs. If loading a separate folder, disable or remove the older copy.
 
-Developers can create the minimal package using `npm ci` and `npm run package`. This project is MIT-licensed, and no settings or data migration is required.
+This is a page-coverage update, not a fix for a browser that removes or disables the extension after restarting. No browser security settings or policies are changed; the extension must remain installed and enabled.
+
+The project remains MIT-licensed. Developers can generate the minimal package with `npm ci` and `npm run package`.

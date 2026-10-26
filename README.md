@@ -70,7 +70,7 @@ This extension only adjusts the visibility of badges in the top navigation bar. 
 
 No build step or command-line setup is required to run the extension. You install the packaged files directly into your browser using unpacked extension mode.
 
-1. Download the [v1.1.1 source ZIP](https://github.com/paulfxyz/quiet-linkedin/archive/refs/tags/v1.1.1.zip).
+1. Download the [v1.1.2 source ZIP](https://github.com/paulfxyz/quiet-linkedin/archive/refs/tags/v1.1.2.zip).
 2. Extract the archive into a permanent folder on your computer so the browser can read it continuously.
 3. Open `chrome://extensions` in Chrome, or navigate to the extension manager in Comet.
 4. Turn on the **Developer mode** toggle in the top-right corner.
@@ -92,13 +92,16 @@ Browser Tab (https://www.linkedin.com/*)
         │
         └── src/quiet.css
               │
-              ├── Known Home / bell SVG IDs (exact small and medium variants)
-              └── Explicit root link selector (/feed, /notifications)
+              ├── Home / bell SVG families, icon attributes, and sprite references
+              ├── Legacy li-icon types and explicitly marked badges
+              └── Root links with query, fragment, and tracking variants
 ```
 
 Because the rules run purely in CSS, the browser evaluates them as the single-page application changes routes or swaps DOM fragments. No mutation observers, DOM polling, or JavaScript runtimes are executed inside the page.
 
-Hashed classes are avoided, and selectors hook into navigation structures and known icon IDs (`#home-medium`, `#home-small`, `#home-fill-medium`, `#home-fill-small`, `#bell-medium`, `#bell-small`, `#bell-fill-medium`, `#bell-fill-small`). These icon IDs are not a guaranteed stable public API, and future markup updates by LinkedIn can break matching rules. Narrow selectors reduce the risk of hiding unintended elements if navigation changes occur.
+Selectors cover both LinkedIn navigation layouts: the SVG-based layout used on profiles and the `li-icon` / notification-badge layout observed in Messaging. They recognize Home and bell icon families through IDs, icon attributes, and sprite references, without depending on hashed classes or translated labels. These hooks are not a guaranteed stable public API; future markup changes can still require updates.
+
+The stylesheet is declared for every path under `https://www.linkedin.com/*`, not just profiles or the feed. Installed-extension tests cover feed, profiles, messaging threads, Notifications, My Network, Jobs, search, and company pages, including reloads and in-page route changes with navigation-layout replacement. Messaging and My Network counters remain outside the hiding rules.
 
 ```text
 quiet-linkedin/                # Repository root (documentation & source)
@@ -132,9 +135,10 @@ Quiet, LinkedIn! targets desktop Chromium browsers including Google Chrome and C
 
 | Environment | Validation status | Notes |
 |---|---|---|
-| **Automated regression suite** | Passed (October 25, 2026) | All 10 tests passed, including the sanitized live navigation layout and unrelated-sibling preservation. |
-| **Installed unpacked Chromium** | Automated pass | The actual package hides both captured badges; matched and nonmatched fixture origins confirm site scoping. |
+| **Automated regression suite** | Passed (October 26, 2026) | All 13 tests passed, including both captured navigation layouts, icon variants, URL variants, and unrelated-badge preservation. |
+| **Installed unpacked Chromium** | Automated pass | Direct loads, reloads, and in-page route/layout changes across eight LinkedIn page categories, with nonmatching origins left untouched. |
 | **Live Comet stylesheet check (v1.1.1)** | Both badges verified | Both started active and became hidden on the live profile page; icons and labels stayed visible. This was stylesheet injection, not installation in Comet. |
+| **Live Comet stylesheet check (v1.1.2)** | Profile and Messaging checked | Home remained hidden in both layouts; Notifications had no active badge. Its insertion and count variants are covered in fixtures, not claimed as a new live simultaneous check. |
 | **Remote GitHub CI** | See dynamic badge | Check the workflow badge above or the Actions tab for current remote status. |
 
 Detailed test methodology and verification summaries are documented in [docs/VALIDATION.md](docs/VALIDATION.md).
@@ -166,6 +170,8 @@ Generating visual assets using `npm run assets` requires Python 3 with the Pillo
 ### The badges are still visible after installing. How do I fix this?
 
 Check `chrome://extensions` to ensure the extension is enabled and loaded from the directory containing `manifest.json`. In the extension details, allow site access to `https://www.linkedin.com/*`; no other website needs access. Reload LinkedIn after changing settings. Managed-browser policies may prevent Developer mode or unpacked extensions, and this project does not override those policies.
+
+If a badge appears only after visiting another LinkedIn section, update to v1.1.2, reload the extension in the manager, and reload all open LinkedIn tabs. The page-coverage update does not diagnose or fix an extension that is removed or disabled by the browser; the extension must remain installed and enabled.
 
 ### Does this mark my notifications as read?
 

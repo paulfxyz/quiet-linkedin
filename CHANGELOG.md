@@ -2,6 +2,22 @@
 
 All notable changes to Quiet, LinkedIn! are documented in this file.
 
+## [1.1.2] - 2026-10-26
+
+### Changed
+- Expanded icon matching to active variants, ID-free `data-test-icon` SVGs, sprite references, and legacy Home / bell `li-icon` types.
+- Added query, fragment, tracking, and slashless root-link variants while keeping post/detail links and unrelated counters outside the rules.
+- Increased navigation-rule specificity to resist later LinkedIn badge styles without runtime scripts.
+
+### Added
+- Sanitized Messaging navigation fixture with no thread identifiers or conversation content.
+- Tests for both navigation layouts, late Notifications badges, and later `!important` styles.
+- Installed-extension coverage for direct loads, reloads, and in-page route/layout changes across feed, profile, messaging, Notifications, My Network, Jobs, search, and company pages.
+
+### Verification
+- All 13 local tests passed. Live Comet stylesheet checks confirmed Home remained hidden on profile and messaging pages; Notifications had no active badge during this check.
+- The reported intermittent reappearance was not reproduced in the fresh messaging tab. This release expands coverage rather than claiming a confirmed root cause, and does not address the separate browser restart/removal report.
+
 ## [1.1.1] - 2026-10-25
 
 ### Changed

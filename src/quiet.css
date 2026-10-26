@@ -7,22 +7,25 @@
  */
 
 /* Live-verified in Comet on 2026-10-25 with both badges active.
+ * Site-wide coverage expanded on 2026-10-26 for both navigation layouts.
  * Current layout: a badge immediately follows the SVG in its icon wrapper.
  * The two wrapper levels are intentional: never hide the text label next to
  * a standalone icon, the icon itself, or an entire navigation control.
  * CSS automatically covers elements inserted during client-side navigation.
  */
-:is(ul, nav, header, .global-nav) :is(a, button)
+:is(ul, nav, header, #global-nav, .global-nav) :is(a, button)
   > :is(span, div)
-  > svg:is(
-    #home-medium,
-    #home-small,
-    #home-fill-medium,
-    #home-fill-small,
-    #bell-medium,
-    #bell-small,
-    #bell-fill-medium,
-    #bell-fill-small
+  > :is(
+    svg:is(
+      [id^="home-"],
+      [id^="bell-"],
+      [data-test-icon^="home-"],
+      [data-test-icon^="bell-"]
+    ),
+    svg:has(> use:is(
+      [*|href^="#home-"],
+      [*|href^="#bell-"]
+    ))
   )
   + :is(span, div):not(:has(svg, li-icon)),
 
@@ -31,37 +34,74 @@
  * may use that class too. Feed posts and notification detail links are not
  * navigation roots and deliberately do not match these URL patterns.
  */
-:is(ul, nav, header, .global-nav)
+:is(ul, nav, header, #global-nav, .global-nav)
   a:is(
     [href="/feed"],
     [href="/feed/"],
+    [href^="/feed?"],
     [href^="/feed/?"],
+    [href^="/feed#"],
+    [href^="/feed/#"],
     [href="https://www.linkedin.com/feed"],
     [href="https://www.linkedin.com/feed/"],
+    [href^="https://www.linkedin.com/feed?"],
     [href^="https://www.linkedin.com/feed/?"],
+    [href^="https://www.linkedin.com/feed#"],
+    [href^="https://www.linkedin.com/feed/#"],
     [href="/notifications"],
     [href="/notifications/"],
+    [href^="/notifications?"],
     [href^="/notifications/?"],
+    [href^="/notifications#"],
+    [href^="/notifications/#"],
     [href="https://www.linkedin.com/notifications"],
     [href="https://www.linkedin.com/notifications/"],
-    [href^="https://www.linkedin.com/notifications/?"]
+    [href^="https://www.linkedin.com/notifications?"],
+    [href^="https://www.linkedin.com/notifications/?"],
+    [href^="https://www.linkedin.com/notifications#"],
+    [href^="https://www.linkedin.com/notifications/#"]
   )
-  :is(.notification-badge, .notification-badge__count),
+  :is(
+    .notification-badge,
+    .notification-badge__count,
+    .notification-badge__no-count,
+    [data-test-notification-badge],
+    [data-test-notification-count]
+  ),
 
-/* Alternate wrappers with an explicitly marked badge, anchored by icon ID. */
-:is(ul, nav, header, .global-nav)
+/* Alternate wrappers: badge may precede the icon, with an SVG, sprite, or
+ * legacy li-icon hook. Never hide the wrapper containing the icon itself.
+ * These selectors intentionally do not depend on the current page URL.
+ */
+:is(ul, nav, header, #global-nav, .global-nav)
   :is(a, button):has(
-    svg:is(
-      #home-medium,
-      #home-small,
-      #home-fill-medium,
-      #home-fill-small,
-      #bell-medium,
-      #bell-small,
-      #bell-fill-medium,
-      #bell-fill-small
+    :is(
+      svg:is(
+        [id^="home-"],
+        [id^="bell-"],
+        [data-test-icon^="home-"],
+        [data-test-icon^="bell-"]
+      ),
+      svg:has(> use:is(
+        [*|href^="#home-"],
+        [*|href^="#bell-"]
+      )),
+      li-icon:is(
+        [type="home"],
+        [type="home-active"],
+        [type="bell"],
+        [type="bell-fill"],
+        [type="bell-active"],
+        [type="bell-fill-active"]
+      )
     )
   )
-  :is(.notification-badge, .notification-badge__count) {
+  :is(
+    .notification-badge,
+    .notification-badge__count,
+    .notification-badge__no-count,
+    [data-test-notification-badge],
+    [data-test-notification-count]
+  ) {
   display: none !important;
 }

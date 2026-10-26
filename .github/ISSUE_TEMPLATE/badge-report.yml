@@ -6,7 +6,7 @@ body:
     id: version
     attributes:
       label: Extension version
-      placeholder: "1.1.1"
+      placeholder: "1.1.2"
     validations:
       required: true
   - type: input
